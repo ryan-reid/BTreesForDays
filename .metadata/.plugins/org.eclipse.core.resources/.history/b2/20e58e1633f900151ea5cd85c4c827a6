@@ -1,0 +1,86 @@
+package implementation;
+
+import java.util.Vector;
+
+public class BPlusTree {
+	private static int maxLeafSize;
+	private Node root;
+	
+	public BPlusTree(int maxItems) {
+		BPlusTree.maxLeafSize = maxItems;
+		root = new LeafNode();
+	}
+	
+	public void insertItem(String item) {
+		root.insert(item);
+	}
+
+	
+	abstract class Node {
+		protected Vector<DataNode> dataList;
+		protected Node parent;
+		protected int maxSize;
+				
+		protected boolean isFull() {
+			boolean full = false;
+			
+			if(dataList.size() == maxLeafSize) {
+				full = true;
+			}
+			
+			return full;
+		}
+		
+		protected DataNode getDataAt(int index) {
+			DataNode data = null;
+			
+			if(dataList.size() > index) {
+				data = (DataNode) dataList.elementAt(index);
+			}
+	
+			return data;
+		}
+		
+		abstract void insert(String value);
+	
+	}
+	
+	private class LeafNode extends Node {
+
+		void insert(String value) {
+			if(dataList.size() == maxLeafSize) {
+				System.out.println("It's full you idiot");
+			} else {
+				
+				int insertLocation = findSpot(value);
+			}
+			
+		}
+		
+		private int findSpot(String value) {
+			int location = -1;
+			
+			for(int i = 0; i < dataList.size(); i++) {
+				if(dataList.elementAt(i).getData().compareTo(value) >= 0) {
+					location = i;
+				}
+			}
+			
+			
+			return location;			
+		}
+		
+	}
+		
+	private class DataNode {
+		String value;
+
+		public DataNode(String value) {
+			this.value = value;
+		}
+		
+		public String getData() {
+			return value;
+		}
+	}
+}

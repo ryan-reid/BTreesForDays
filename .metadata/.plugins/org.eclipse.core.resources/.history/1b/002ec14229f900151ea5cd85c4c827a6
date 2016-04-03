@@ -1,0 +1,17 @@
+package implementation;
+
+public class BPlusTree {
+	private static final int maxLeafSize;
+	
+	public BPlusTree(int maxItems) {
+		maxLeafSize = maxItems;
+	}
+
+	
+	private class Node {
+
+		private Node( ) {
+
+		}
+	}
+}

@@ -1,0 +1,38 @@
+package implementation;
+
+public class BPlusTree {
+	private static int maxLeafSize;
+	private Node root;
+	
+	public BPlusTree(int maxItems) {
+		BPlusTree.maxLeafSize = maxItems;
+		root = new LNode();
+	}
+
+	
+	abstract class Node{
+		protected int entries;
+		protected String[] keys;
+		
+		abstract public int getLocation(String value);
+	}
+	
+	private class LNode extends Node {
+		String[] keys = new String[maxLeafSize];
+		
+		
+		public int getLocation(String value) {
+			int location = maxLeafSize;
+			
+			for(int i = 0; i < entries; i++) {
+				if(keys[i].compareTo(value) == 0) {
+					location = i;
+					break;
+				}
+			}
+			
+			return location;
+		}
+		
+	}
+}
