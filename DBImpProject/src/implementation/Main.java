@@ -12,6 +12,7 @@ public class Main {
 		tree.insertItem("1");
 		tree.insertItem("2");
 		tree.insertItem("3");
-		tree.insertItem("5");
+		
+		System.out.println("Got this value: " + tree.getItem("4"));
 	}
 }
