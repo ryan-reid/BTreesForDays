@@ -54,14 +54,25 @@ public class BPlusTree {
 
 		void insert(DataNode item) {
 			int insertLocation = findSpot(item.getData());
+			boolean alreadyInThere = false;
 			
-			if(dataList.size() == maxLeafSize) {	
-				dataList.insertElementAt(item, insertLocation);
-				splitTree();				
-			} else {			
-				
-				dataList.insertElementAt(item, insertLocation);
-				System.out.println("Inserted");
+			if(insertLocation < dataList.size()) {
+				if(dataList.elementAt(insertLocation).getData().compareTo(item.getData()) == 0) {
+					alreadyInThere = true;
+				}
+			}
+			
+			if(!alreadyInThere) {
+				if(dataList.size() == maxLeafSize) {	
+					dataList.insertElementAt(item, insertLocation);
+					splitTree();				
+				} else {			
+					
+					dataList.insertElementAt(item, insertLocation);
+					System.out.println("Inserted");
+				}
+			} else {
+				System.out.println("Duplicate entry");
 			}
 			
 		}
@@ -128,22 +139,6 @@ public class BPlusTree {
 				}
 			}
 				
-				/*
-				if(index == 0) {
-					parent.dataList.elementAt(index + 1).left = right; 
-				} else if(index == maxLeafSize) {
-					parent.dataList.elementAt(index - 1).right = left;
-				} else {
-					if(split || index == maxLeafSize - 1) {
-						parent.dataList.elementAt(index).left = right; 
-					} else {
-						parent.dataList.elementAt(index + 1).left = right; 
-					}
-					
-					parent.dataList.elementAt(index - 1).right = left;
-				}
-			}
-			*/
 			dataList.remove(maxLeafSize/2);
 			
 			System.out.println("Inserted and split");
@@ -155,6 +150,7 @@ public class BPlusTree {
 			for(int i = 0; i < dataList.size(); i++) {
 				if(dataList.elementAt(i).getData().compareTo(value) >= 0) {
 					location = i;
+					break;
 				}
 			}			
 			
@@ -183,6 +179,7 @@ public class BPlusTree {
 					location = i;
 				}
 			}
+			
 			
 			dataList.insertElementAt(new DataNode(item.getData()), location);
 			
@@ -254,22 +251,6 @@ public class BPlusTree {
 				}
 			}
 				
-			/*	
-				if(index == 0) {
-					parent.dataList.elementAt(index + 1).left = right; 
-				} else if(index == maxLeafSize - 1) {
-					parent.dataList.elementAt(index - 1).right = left;
-				} else {
-					if(split || index == maxLeafSize - 1) {
-						parent.dataList.elementAt(index).left = right; 
-					} else {
-						parent.dataList.elementAt(index + 1).left = right; 
-					}
-					
-					parent.dataList.elementAt(index - 1).right = left;
-				}
-			}
-			*/
 			dataList.remove(maxLeafSize/2);
 		}
 
@@ -300,7 +281,7 @@ public class BPlusTree {
 		
 		void insert(DataNode item) {
 			
-			if(dataList.elementAt(0).getData().compareTo(item.getData()) >= 0) {
+			if(dataList.elementAt(0).getData().compareTo(item.getData()) > 0) {
 				dataList.elementAt(0).insertLeft(item);
 			} else {
 				dataList.elementAt(0).insertRight(item);
@@ -317,14 +298,6 @@ public class BPlusTree {
 			this.value = value;
 			right = null;
 			left = null;
-		}
-		
-		public String getRight(String item) {
-			return right.get(item);
-		}
-		
-		public String getLeft(String item) {
-			return left.get(item);
 		}
 				
 		public String getData() {
