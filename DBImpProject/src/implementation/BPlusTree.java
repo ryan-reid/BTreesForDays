@@ -133,7 +133,9 @@ public class BPlusTree {
 					} else if(index == maxLeafSize) {
 						parent.dataList.elementAt(index - 1).setRight(left);
 					} else {
-						parent.dataList.elementAt(index + 1).setLeft(right);
+						if(index  + 1 != parent.dataList.size()) {
+							parent.dataList.elementAt(index + 1).setLeft(right);
+						}	
 						parent.dataList.elementAt(index - 1).setRight(left);
 					}
 				}
@@ -172,15 +174,7 @@ public class BPlusTree {
 		}
 		
 		int insertIndex(DataNode item) {			
-			int location = dataList.size();
-			
-			for(int i = 0; i < dataList.size(); i++) {
-				if(dataList.elementAt(i).getData().compareTo(item.getData()) >= 0) {
-					location = i;
-				}
-			}
-			
-			
+			int location = getLocation(item);
 			dataList.insertElementAt(new DataNode(item.getData()), location);
 			
 			if(dataList.size() > maxLeafSize) {
@@ -279,13 +273,32 @@ public class BPlusTree {
 			return returnString;
 		}
 		
-		void insert(DataNode item) {
+		public int getLocation(DataNode item) {			
+			int location = dataList.size();
 			
-			if(dataList.elementAt(0).getData().compareTo(item.getData()) > 0) {
-				dataList.elementAt(0).insertLeft(item);
+			for(int i = 0; i < dataList.size(); i++) {
+				if(dataList.elementAt(i).getData().compareTo(item.getData()) >= 0) {
+					location = i;
+					break;
+				}
+			}	
+			
+			return location;
+		}
+		
+		void insert(DataNode item) {
+			int location = getLocation(item);
+			
+			if(location == dataList.size()) {
+				dataList.elementAt(location  - 1).insertRight(item);
 			} else {
-				dataList.elementAt(0).insertRight(item);
+				if(dataList.elementAt(location).getData().compareTo(item.getData()) > 0) {
+					dataList.elementAt(location).insertLeft(item);
+				} else {
+					dataList.elementAt(location).insertRight(item);
+				}
 			}
+			
 		}	
 	}
 		
