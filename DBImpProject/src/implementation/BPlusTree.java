@@ -122,8 +122,15 @@ public class BPlusTree {
 				right.parent = parent;
 				
 				if(split) {
-					parent.dataList.elementAt(index).setLeft(right);
-					parent.dataList.elementAt(index - 1).setRight(left);
+					if(index == maxLeafSize) {
+						parent.dataList.elementAt(index - 1).setLeft(left);
+						parent.dataList.elementAt(index - 1).setRight(right);
+						parent.dataList.elementAt(index - 2).setRight(left);
+					} else {
+						parent.dataList.elementAt(index).setLeft(right);
+						parent.dataList.elementAt(index - 1).setRight(left);
+					}
+
 				} else {
 					parent.dataList.elementAt(index).setLeft(left);
 					parent.dataList.elementAt(index).setRight(right);

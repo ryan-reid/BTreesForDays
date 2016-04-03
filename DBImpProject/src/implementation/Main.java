@@ -13,6 +13,8 @@ public class Main {
 		tree.insertItem("2");
 		tree.insertItem("3");
 		tree.insertItem("7");
+		tree.insertItem("8");
+		tree.insertItem("9");
 		
 		tree.insertItem("4");
 		tree.insertItem("5");
@@ -21,6 +23,8 @@ public class Main {
 		tree.insertItem("2");
 		tree.insertItem("3");
 		tree.insertItem("7");
+		tree.insertItem("8");
+		tree.insertItem("9");
 		
 		System.out.println("Got this value: " + tree.getItem("4"));
 		System.out.println("Got this value: " + tree.getItem("5"));
