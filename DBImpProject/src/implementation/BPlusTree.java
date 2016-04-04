@@ -1,4 +1,3 @@
-
 package implementation;
 
 import java.util.Vector;
@@ -12,11 +11,11 @@ public class BPlusTree {
 		root = new LeafNode();
 	}
 	
-	public void insertItem(String item) {
+	public void insertItem(int item) {
 		root.insert(new DataNode(item));
 	}
 	
-	public String getItem(String item) {
+	public int getItem(int item) {
 		return root.get(item);
 	}
 
@@ -47,7 +46,7 @@ public class BPlusTree {
 		}
 		
 		abstract void insert(DataNode value);
-		public abstract String get(String value);
+		public abstract int get(int value);
 	
 	}
 	
@@ -58,7 +57,7 @@ public class BPlusTree {
 			boolean alreadyInThere = false;
 			
 			if(insertLocation < dataList.size()) {
-				if(dataList.elementAt(insertLocation).getData().compareTo(item.getData()) == 0) {
+				if(dataList.elementAt(insertLocation).getData() == item.getData()) {
 					alreadyInThere = true;
 				}
 			}
@@ -78,11 +77,11 @@ public class BPlusTree {
 			
 		}
 		
-		public String get(String item) {
-			String returnItem = null;
+		public int get(int item) {
+			int returnItem = -1;
 			
 			for(int i = 0; i < dataList.size(); i++) {
-				if(dataList.elementAt(i).getData().compareTo(item) == 0) {
+				if(dataList.elementAt(i).getData() == item) {
 					returnItem = item;
 					break;
 				}
@@ -120,16 +119,24 @@ public class BPlusTree {
 				
 				if(split) {					
 					 if (index == 0) {
-						parent.dataList.elementAt(index).setLeft(right);
-						
+						 if(parent.dataList.elementAt(index).right != null) {
+							 parent.dataList.elementAt(index).setLeft(right);
+						 } else {
+							parent.dataList.elementAt(index).setLeft(this);
+							parent.dataList.elementAt(index).setRight(right);
+						 }
+		
 					} else if(index == parent.dataList.size() - 1) {
 						parent.dataList.elementAt(index).setRight(right);
 						parent.dataList.elementAt(index).setLeft(this);
 						parent.dataList.elementAt(index - 1).setRight(this);
-					} else	{
+					} else if (index == parent.dataList.size()) {
+						parent.dataList.elementAt(index - 1).setRight(this);
+					} else {
 						parent.dataList.elementAt(index).setLeft(right);
 						parent.dataList.elementAt(index - 1).setRight(this);
-					}
+					}					 
+					 
 				} else {
 					parent.dataList.elementAt(index).setLeft(this);
 					parent.dataList.elementAt(index).setRight(right);
@@ -148,11 +155,11 @@ public class BPlusTree {
 			System.out.println("Inserted and split");
 		}
 		
-		private int findSpot(String value) {
+		private int findSpot(int value) {
 			int location = dataList.size();
 			
 			for(int i = 0; i < dataList.size(); i++) {
-				if(dataList.elementAt(i).getData().compareTo(value) >= 0) {
+				if(dataList.elementAt(i).getData() >= value) {
 					location = i;
 					break;
 				}
@@ -207,8 +214,7 @@ public class BPlusTree {
 				root = parent;
 				parent.parent = null;
 				
-				right.parent = parent;					
-				right.dataList.remove(0);
+				right.parent = parent;			
 				
 				parent.dataList.elementAt(0).left = this;
 				parent.dataList.elementAt(0).right = right;
@@ -217,14 +223,23 @@ public class BPlusTree {
 						right.dataList.elementAt(i).left.parent = right;
 						right.dataList.elementAt(i).right.parent = right;
 					}
-
 				}
+				
+				right.dataList.remove(0);
 				
 			} else {
 				boolean split = parent.insertIndex(right.dataList.elementAt(0));
 				int index = getLocation(right.dataList.elementAt(0));
 				right.parent = parent;			
 				
+				for(int i = 0; i < right.dataList.size(); i++) {
+					if(right.dataList.elementAt(i).left != null) {
+						right.dataList.elementAt(i).left.parent = right;
+						right.dataList.elementAt(i).right.parent = right;
+					}
+				}				
+				
+				right.dataList.remove(0);
 				
 				if(split) {
 					if (index == dataList.size() - 1) {
@@ -234,12 +249,17 @@ public class BPlusTree {
 					} else if (index == 0) {
 						parent.dataList.elementAt(index).setLeft(this);
 						parent.dataList.elementAt(index).setRight(right);
-					} else {
-						parent.dataList.elementAt(index).setLeft(right);
-						parent.dataList.elementAt(index - 1).setRight(this);
+					} else if(index == dataList.size()) {
+						if(index == 1) {
+							parent.dataList.elementAt(index - 1).setLeft(this);
+							parent.dataList.elementAt(index - 1).setRight(right);
+						} else {
+							parent.dataList.elementAt(index).setLeft(right);
+							parent.dataList.elementAt(index - 1).setRight(this);
+						}
 					}
 					
-					right.dataList.remove(0);
+					//right.dataList.remove(0);
 				} else {
 					parent.dataList.elementAt(index).setLeft(this);
 					parent.dataList.elementAt(index).setRight(right);
@@ -257,12 +277,12 @@ public class BPlusTree {
 		}
 
 		
-		public String get(String item) {
-			String returnString = null;
+		public int get(int item) {
+			int returnString = -1;
 			int location = dataList.size();
 			
 			for(int i = 0; i < dataList.size(); i++) {
-				if(dataList.elementAt(i).getData().compareTo(item) > 0) {
+				if(dataList.elementAt(i).getData() > item) {
 					location = i;
 					break;
 				}
@@ -285,7 +305,7 @@ public class BPlusTree {
 			int location = dataList.size();
 			
 			for(int i = 0; i < dataList.size(); i++) {
-				if(dataList.elementAt(i).getData().compareTo(item.getData()) >= 0) {
+				if(dataList.elementAt(i).getData() >= item.getData()) {
 					location = i;
 					break;
 				}
@@ -300,7 +320,7 @@ public class BPlusTree {
 			if(location == dataList.size()) {
 				dataList.elementAt(location  - 1).insertRight(item);
 			} else {
-				if(dataList.elementAt(location).getData().compareTo(item.getData()) > 0) {
+				if(dataList.elementAt(location).getData() > item.getData()) {
 					dataList.elementAt(location).insertLeft(item);
 				} else {
 					dataList.elementAt(location).insertRight(item);
@@ -311,17 +331,17 @@ public class BPlusTree {
 	}
 		
 	private class DataNode {
-		String value;
+		int value;
 		Node right;
 		Node left;
 
-		public DataNode(String value) {
+		public DataNode(int value) {
 			this.value = value;
 			right = null;
 			left = null;
 		}
 				
-		public String getData() {
+		public int getData() {
 			return value;
 		}
 		
