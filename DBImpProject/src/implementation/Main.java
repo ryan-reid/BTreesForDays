@@ -3,7 +3,7 @@ package implementation;
 public class Main {
 
 	public static void main(String[] args) {
-		BPlusTree tree = new BPlusTree(3);
+		BPlusTree tree = new BPlusTree(2);
 		
 		
 		tree.insertItem("4");
@@ -13,18 +13,8 @@ public class Main {
 		tree.insertItem("2");
 		tree.insertItem("3");
 		tree.insertItem("7");
-		tree.insertItem("8");
-		tree.insertItem("9");
+
 		
-		tree.insertItem("4");
-		tree.insertItem("5");
-		tree.insertItem("6");
-		tree.insertItem("1");
-		tree.insertItem("2");
-		tree.insertItem("3");
-		tree.insertItem("7");
-		tree.insertItem("8");
-		tree.insertItem("9");
 		
 		System.out.println("Got this value: " + tree.getItem("4"));
 		System.out.println("Got this value: " + tree.getItem("5"));
@@ -34,5 +24,6 @@ public class Main {
 		System.out.println("Got this value: " + tree.getItem("2"));
 		System.out.println("Got this value: " + tree.getItem("3"));
 		System.out.println("Got this value: " + tree.getItem("1"));
+		
 	}
 }
