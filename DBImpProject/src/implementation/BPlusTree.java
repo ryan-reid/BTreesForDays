@@ -69,7 +69,6 @@ public class BPlusTree {
 				} else {			
 					
 					dataList.insertElementAt(item, insertLocation);
-					System.out.println("Inserted");
 				}
 			} else {
 				System.out.println("Duplicate entry");
@@ -168,7 +167,6 @@ public class BPlusTree {
 				}
 			}
 			
-			System.out.println("Inserted and split");
 		}
 		
 		private int findSpot(int value) {
