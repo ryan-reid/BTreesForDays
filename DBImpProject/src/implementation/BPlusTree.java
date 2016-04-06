@@ -81,17 +81,13 @@ public class BPlusTree {
 			
 			for(int i = 0; i < dataList.size(); i++) {
 				if(dataList.elementAt(i).getData() == item) {
-					if(dataList.elementAt(i).getData() == item) {
-						//System.out.println("You made it to item: " + item);
-					}
+		
 					returnItem = item;
 					break;
 				}			
 			}
 	
-			if(returnItem == -1) {
-				System.out.println("You made it to item: " + dataList.elementAt(0).getData());
-			}
+	
 			
 			return returnItem;
 		}
@@ -123,50 +119,62 @@ public class BPlusTree {
 				int index = parent.getLocation(right.dataList.elementAt(0));
 				right.parent = parent;
 				
-				if(split) {					
-					 if (index == 0) {
-						 if(parent.dataList.elementAt(index).right != null) {
-							 parent.dataList.elementAt(index).setLeft(right);
-						 } else {
+				
+				//Case 1. It's the first element.
+				if(index == 0) {
+
+					if(split) {
+						if(parent.parent.getLocation(parent) > 0 && parent.parent.getLocation(parent) < maxLeafSize) {
+							parent.dataList.elementAt(index).setLeft(right);
+						} else {
 							parent.dataList.elementAt(index).setLeft(this);
 							parent.dataList.elementAt(index).setRight(right);
-						 }
-		
-					} else if(index == parent.dataList.size() - 1) {
-						parent.dataList.elementAt(index).setRight(right);
-						parent.dataList.elementAt(index).setLeft(this);
-						parent.dataList.elementAt(index - 1).setRight(this);
-					} else if (index == parent.dataList.size()) {
-						parent.dataList.elementAt(index - 1).setRight(this);
+							if(parent.dataList.size() > 1) {
+								parent.dataList.elementAt(index + 1).setLeft(right);
+							}
+						}
 					} else {
-						parent.dataList.elementAt(index).setLeft(right);
-						parent.dataList.elementAt(index - 1).setRight(this);
-					}					 
-					 
+						parent.dataList.elementAt(index).setLeft(this);
+						parent.dataList.elementAt(index).setRight(right);
+						if(parent.dataList.size() > 1) {
+							parent.dataList.elementAt(index + 1).setLeft(right);
+						}
+					}
+					parent.dataList.elementAt(index).setLeft(this);
+					parent.dataList.elementAt(index).setRight(right);
+					if(parent.dataList.size() > 1) {
+						parent.dataList.elementAt(index + 1).setLeft(right);
+					}
+							
+					//Case 2 Some where in the middle
+				} else if(index < parent.dataList.size() - 1) {
+					parent.dataList.elementAt(index).setLeft(this);
+					parent.dataList.elementAt(index).setRight(right);
+					parent.dataList.elementAt(index + 1).setLeft(right);
+					parent.dataList.elementAt(index - 1).setRight(this);
+
+					//Case 3 At the end
+				} else if(index == parent.dataList.size()) {
+					parent.dataList.elementAt(index - 1).setLeft(this);
+					parent.dataList.elementAt(index - 1).setRight(right);
+					
+					if(index >= 2) {
+						parent.dataList.elementAt(index - 2).setRight(this);
+					}
 				} else {
 					parent.dataList.elementAt(index).setLeft(this);
 					parent.dataList.elementAt(index).setRight(right);
 					
-					if(index == 0) {
-						parent.dataList.elementAt(index + 1).setLeft(right);
-					} else if(index == maxLeafSize - 1) {
-						parent.dataList.elementAt(index - 1).setRight(this);
-					} else if(maxLeafSize > 2){
-						if(index == parent.dataList.size() - 1) {
-							parent.dataList.elementAt(index).setRight(right);
-							parent.dataList.elementAt(index).setLeft(this);
-							parent.dataList.elementAt(index - 1).setRight(this);
-						} else {
-							parent.dataList.elementAt(index + 1).setLeft(right);
-							parent.dataList.elementAt(index - 1).setRight(this);
-						}
-					} else {
-						parent.dataList.elementAt(index + 1).setLeft(right);
+					if(index >= 1) {
 						parent.dataList.elementAt(index - 1).setRight(this);
 					}
+					
+					if (index < parent.dataList.size() - 1) {
+						parent.dataList.elementAt(index + 1).setLeft(right);
+					}
 				}
-			}
-			
+				
+			}	
 		}
 		
 		private int findSpot(int value) {
@@ -234,80 +242,93 @@ public class BPlusTree {
 				parent.dataList.elementAt(0).right = right;
 				for(int i = 0; i < right.dataList.size(); i++) {
 					if(right.dataList.elementAt(i).left != null) {
-						right.dataList.elementAt(i).left.parent = right;
+						//right.dataList.elementAt(i).left.parent = right;
 						right.dataList.elementAt(i).right.parent = right;
 					}
+				}
+				
+				if(right.dataList.elementAt(0).left != null) {
+					right.dataList.elementAt(0).left.parent = this;
 				}
 				
 				right.dataList.remove(0);
 				
 			} else {
 				boolean split = parent.insertIndex(right.dataList.elementAt(0));
-				right.parent = parent;			
+				right.parent = parent;						
+				int index = parent.getLocation(right.dataList.elementAt(0));
 				
 				for(int i = 0; i < right.dataList.size(); i++) {
 					if(right.dataList.elementAt(i).left != null) {
 						right.dataList.elementAt(i).left.parent = right;
 						right.dataList.elementAt(i).right.parent = right;
 					}
-				}				
+				}
 				
-				right.dataList.remove(0);
-				
-				int index = parent.getLocation(right.dataList.elementAt(0));
-				
-				if(split) {
-					if (index == 0) {
-						parent.dataList.elementAt(index).setLeft(this);
-						parent.dataList.elementAt(index).setRight(right);
-					} if(maxLeafSize > 2) {
-							if(index == parent.dataList.size()) {
-								parent.dataList.elementAt(index - 1).setRight(right);
-								parent.dataList.elementAt(index - 1).setLeft(this);
-								parent.dataList.elementAt(index - 2).setRight(this);
-							} else {
-								parent.dataList.elementAt(index + 1).setRight(right);
-								parent.dataList.elementAt(index + 1).setLeft(this);
-								parent.dataList.elementAt(index).setRight(this);
-							}
-						} else {
-							if(index == 1) {
-								parent.dataList.elementAt(index - 1).setLeft(this);
-								parent.dataList.elementAt(index - 1).setRight(right);
-							} else {
-								parent.dataList.elementAt(index).setLeft(right);
-								parent.dataList.elementAt(index - 1).setRight(this);
-							}
-						}
-						
-					
-				} else {
-					if(index == parent.dataList.size()) {
-						parent.dataList.elementAt(index - 1).setLeft(this);
-						parent.dataList.elementAt(index - 1).setRight(right);
-					}
-
-					
-					if(index == 0) {
-						parent.dataList.elementAt(index + 1).setLeft(right);
-					}  else if(index == parent.dataList.size()) {
-						parent.dataList.elementAt(index - 1).setLeft(this);
-						parent.dataList.elementAt(index - 1).setRight(right);
-					} else if(maxLeafSize > 2){
-						if(index == parent.dataList.size() - 1) {
-							parent.dataList.elementAt(index).setLeft(right);
-							parent.dataList.elementAt(index - 1).setRight(this);
-						} else {
-							parent.dataList.elementAt(index + 1).setRight(right);
-							parent.dataList.elementAt(index + 1).setLeft(this);
-							parent.dataList.elementAt(index).setRight(this);
-						}
-					} else {
-						parent.dataList.elementAt(index + 1).setLeft(right);
-						parent.dataList.elementAt(index - 1).setRight(this);
+				if(!split) {
+					if(right.dataList.elementAt(0).left != null) {
+						right.dataList.elementAt(0).left.parent = this;
 					}
 				}
-			}
+
+				right.dataList.remove(0);		
+				
+				//Case 1. It's the first element.
+				if(index == 0) {
+
+					if(split) {
+						if(parent.parent.getLocation(parent) > 0 && parent.parent.getLocation(parent) < maxLeafSize) {
+							parent.dataList.elementAt(index).setLeft(right);
+						} else {
+							parent.dataList.elementAt(index).setLeft(this);
+							parent.dataList.elementAt(index).setRight(right);
+							if(parent.dataList.size() > 1) {
+								parent.dataList.elementAt(index + 1).setLeft(right);
+							}
+						}
+					} else {
+						parent.dataList.elementAt(index).setLeft(this);
+						parent.dataList.elementAt(index).setRight(right);
+						if(parent.dataList.size() > 1) {
+							parent.dataList.elementAt(index + 1).setLeft(right);
+						}
+					}
+					parent.dataList.elementAt(index).setLeft(this);
+					parent.dataList.elementAt(index).setRight(right);
+					if(parent.dataList.size() > 1) {
+						parent.dataList.elementAt(index + 1).setLeft(right);
+					}
+							
+					//Case 2 Some where in the middle
+				} else if(index < parent.dataList.size() - 1) {
+					parent.dataList.elementAt(index).setLeft(this);
+					parent.dataList.elementAt(index).setRight(right);
+					parent.dataList.elementAt(index + 1).setLeft(right);
+					parent.dataList.elementAt(index - 1).setRight(this);
+
+					//Case 3 At the end
+				} else if(index == parent.dataList.size()) {
+					parent.dataList.elementAt(index - 1).setLeft(this);
+					parent.dataList.elementAt(index - 1).setRight(right);
+					
+					if(index >= 2) {
+						parent.dataList.elementAt(index - 2).setRight(this);
+					}
+				} else {
+					parent.dataList.elementAt(index).setLeft(this);
+					parent.dataList.elementAt(index).setRight(right);
+					
+					if(index >= 1) {
+						parent.dataList.elementAt(index - 1).setRight(this);
+					}
+					
+					if (index < parent.dataList.size() - 1) {
+						parent.dataList.elementAt(index + 1).setLeft(right);
+					}
+				}
+				
+			}		
+		
 		}
 
 		
@@ -352,6 +373,19 @@ public class BPlusTree {
 			
 			for(int i = 0; i < dataList.size(); i++) {
 				if(dataList.elementAt(i).getData() >= item.getData()) {
+					location = i ;
+					break;
+				} 
+			}	
+			
+			return location;
+		}
+		
+		public int getLocation(TreeNode node) {
+			int location = dataList.size();
+			
+			for(int i = 0; i < dataList.size(); i++) {
+				if(dataList.elementAt(i).equals(node)) {
 					location = i ;
 					break;
 				} 
